@@ -4,68 +4,6 @@ Problem
 
 ALS has no confirmatory test — diagnosis takes 10–15 months on average and relies on ruling out other conditions [1][2], with up to 40% of patients initially misdiagnosed [3]. This project screens for early ALS risk from non-invasive voice + gait signals, shortening the path to specialist diagnosis and multidisciplinary care, which is independently associated with a 6-month survival benefit [4].
 
-Architecture
-PATIENT
-  |-- VOICE TEST (bulbar symptoms) -----> acoustic feature extraction --|
-  |-- WALKING TEST (limb symptoms) -----> gait feature extraction ------|
-                                                                          v
-                                              COMBINED FEATURE POOL
-                                                       |
-                                    Imputation -> LASSO Feature Selection
-                                                       |
-                        -------------------------------------------------
-                        |                                               |
-                CLASSICAL BRANCH                              QUANTUM BRANCH
-                StandardScaler -> Model                PCA -> ZZFeatureMap -> Fidelity
-                                                         Quantum Kernel -> QSVM/VQC/QNN
-                        |                                               |
-                        -------------------------------------------------
-                                                       |
-                                          HYBRID FUSION LAYER
-                            Kernel-PCA Concatenation | Probability-Averaging
-                                      | Trained Kernel Alignment (KTA)
-                                                       |
-                                    STATISTICAL VALIDATION
-                        Repeated Stratified K-Fold CV, identical splits
-                             Paired t-test + Wilcoxon signed-rank
-                                                       |
-                                        ALS RISK OUTPUT + EXPLAINABILITY
-                                        (screening flag — not a diagnosis)
-
-Full architecture write-up: docs/architecture.md
-
-Repository Structure
-├── README.md
-├── LICENSE
-├── requirements.txt
-├── .gitignore
-├── config.example.py          # copy to config.py and fill in your real paths
-├── src/
-│   ├── train_quantum_only.py           # classical/quantum benchmarking pipeline
-│   ├── evaluate_hybrid_vs_classical.py # 4-arm fair comparison + paired significance tests
-│   └── evaluate_kernel_alignment.py    # trained (aligned) quantum kernel variant
-├── results/
-│   ├── summary_results.csv
-│   ├── paired_tests.csv
-│   └── fold_level_results.csv
-└── docs/
-    └── architecture.md
-Setup
-bash
-python -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-
-cp config.example.py config.py  # then edit config.py with your real data paths
-
-Note on qiskit-aer: install it explicitly for fast circuit simulation (pip install qiskit-aer) — without it, quantum circuits fall back to Qiskit's much slower reference simulator. Verify it's active from the [info] qiskit-aer available: True line printed at the start of any run.
-
-Running
-bash
-python src/evaluate_hybrid_vs_classical.py <path_to_features.csv> <path_to_clinical.xlsx>
-
-Outputs (fold-level results, summary, paired significance tests) are written to model_outputs_hybrid_eval/ next to your input CSV.
-
 Key Results (Strict Dysarthric ALS vs. Healthy Control cohort)
 Model	Accuracy	F1-Score	ROC-AUC
 Quantum-Only (QSVM)	72.1%	83.6%	0.555
