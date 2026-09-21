@@ -1,8 +1,13 @@
 # ALSENSE
 A hybrid quantum-classical machine learning pipeline for early ALS (Amyotrophic Lateral Sclerosis) screening, combining voice biomarkers (bulbar symptoms) and gait/walking-test features (limb symptoms), with classical ML, quantum ML (QSVM/VQC/QNN), and hybrid fusion strategies benchmarked side-by-side using statistically validated cross-validation.
+
 Problem
 
 ALS has no confirmatory test — diagnosis takes 10–15 months on average and relies on ruling out other conditions [1][2], with up to 40% of patients initially misdiagnosed [3]. This project screens for early ALS risk from non-invasive voice + gait signals, shortening the path to specialist diagnosis and multidisciplinary care, which is independently associated with a 6-month survival benefit [4].
+
+Architecture
+
+<img width="1600" height="900" alt="WhatsApp Image 2026-09-20 at 3 26 51 PM" src="https://github.com/user-attachments/assets/486e502c-30a9-41cb-bee7-1002c772f433" />
 
 Key Results (Strict Dysarthric ALS vs. Healthy Control cohort)
 Model	Accuracy	F1-Score	ROC-AUC
